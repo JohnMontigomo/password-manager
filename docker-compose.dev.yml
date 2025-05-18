@@ -1,0 +1,52 @@
+services:
+
+  php-fpm:
+    build: docker
+    container_name: ${PHP_CONTAINER_NAME}
+    working_dir: /app
+    restart: always
+    environment:
+      - "XDEBUG_MODE=coverage"
+    volumes:
+      - ./:/app
+    networks:
+      - password-manager
+
+  nginx:
+    image: nginx
+    container_name: ${NGINX_CONTAINER_NAME}
+    working_dir: /app
+    restart: always
+    ports:
+      - "${APP_HTTP_PORT}:80"
+    volumes:
+      - ./:/app
+      - ./docker/nginx.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - password-manager
+    depends_on:
+      - php-fpm
+      - postgres
+
+  postgres:
+    image: postgres:15
+    container_name: ${POSTGRES_CONTAINER_NAME}
+    working_dir: /app
+    restart: always
+    environment:
+      POSTGRES_DB: "${POSTGRES_DB}"
+      POSTGRES_USER: "${POSTGRES_USER}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD}"
+    volumes:
+      - dump-password-manager:/app/dump
+      - postgresql-password-manager:/var/lib/postgresql/data
+    networks:
+      - password-manager
+
+networks:
+  password-manager:
+    driver: bridge
+
+volumes:
+  postgresql-password-manager:
+  dump-password-manager:

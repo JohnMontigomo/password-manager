@@ -1,0 +1,2 @@
+encrypted_fields :
+  master_key : '%env(ENCRYPTED_FIELDS_KEY)%'
