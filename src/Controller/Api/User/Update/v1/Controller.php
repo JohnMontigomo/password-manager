@@ -22,13 +22,6 @@ class Controller
     {
     }
 
-    /**
-     * @param UpdateUserDTO $updateUserDTO
-     * @param Request $request
-     * @return Response
-     * @throws AccessDeniedException
-     * @throws UnauthorizedException
-     */
     #[Route(path:self::CONTROLLER_URL, methods: ['PATCH'])]
     public function __invoke(#[MapRequestPayload] UpdateUserDTO $updateUserDTO, Request $request): Response
     {

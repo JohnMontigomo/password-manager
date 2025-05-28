@@ -4,9 +4,11 @@ namespace App\Domain\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Domain\Entity\Interface\EntityInterface;
+use App\Domain\Enum\UserRoleEnum;
 use DateTime;
 use Doctrine\ORM\Mapping as ORM;
 use Gebler\EncryptedFieldsBundle\Attribute\EncryptedField;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Table(name: '`account')]
 #[ORM\Entity]
@@ -14,33 +16,44 @@ use Gebler\EncryptedFieldsBundle\Attribute\EncryptedField;
 #[ORM\HasLifecycleCallbacks]
 class Account implements EntityInterface
 {
+    private const ROLE_ADMIN = UserRoleEnum::ROLE_ADMIN->value;
+    private const ROLE_USER = UserRoleEnum::ROLE_USER->value;
+    
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups([self::ROLE_ADMIN, self::ROLE_USER])]
     private ?int $id = null;
 
     #[EncryptedField]
     #[ORM\Column(name: 'title', type: 'string', nullable: false)]
+    #[Groups([self::ROLE_ADMIN, self::ROLE_USER])]
     private string $title;
 
     #[EncryptedField]
     #[ORM\Column(name: 'login', type: 'string', nullable: false)]
+    #[Groups([self::ROLE_USER])]
     private string $login;
 
     #[EncryptedField]
     #[ORM\Column(name: 'password', type: 'string', nullable: false)]
+    #[Groups([self::ROLE_USER])]
     private string $password;
 
     #[ORM\ManyToOne(targetEntity: AccountType::class, inversedBy: 'account')]
+    #[Groups([self::ROLE_ADMIN, self::ROLE_USER])]
     private ?AccountType $accountType;
 
     #[ORM\ManyToOne(targetEntity: User::class, inversedBy: '`user`')]
+    #[Groups([self::ROLE_ADMIN])]
     private User $user;
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false)]
+    #[Groups([self::ROLE_ADMIN])]
     private DateTime $createdAt;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: false)]
+    #[Groups([self::ROLE_ADMIN])]
     private DateTime $updatedAt;
 
     public function getId(): int
@@ -114,6 +127,7 @@ class Account implements EntityInterface
         $this->createdAt = new DateTime();
     }
 
+    #[Groups([self::ROLE_ADMIN])]
     public function getUpdatedAt(): DateTime
     {
         return $this->updatedAt;

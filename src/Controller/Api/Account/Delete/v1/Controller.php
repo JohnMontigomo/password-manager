@@ -23,12 +23,6 @@ class Controller
     ) {
     }
 
-    /**
-     * @param Account|null $account
-     * @param Request $request
-     * @return Response
-     * @throws AccessDeniedException
-     */
     #[Route(path: self::CONTROLLER_URL . '/{id}', methods: ['DELETE'])]
     public function __invoke(#[MapEntity(id: 'id')] ?Account $account, Request $request): Response
     {

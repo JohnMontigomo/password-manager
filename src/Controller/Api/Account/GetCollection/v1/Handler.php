@@ -3,34 +3,37 @@
 namespace App\Controller\Api\Account\GetCollection\v1;
 
 use App\Application\Security\AuthService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class Handler
 {
     public function __construct(
         private readonly AuthService $authService,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
-    /**
-     * @param Request $request
-     * @return OutputAccountDTO[]
-     */
-    public function getCollection(Request $request): array
+    public function getCollection(Request $request): JsonResponse
     {
         $user = $this->authService->getUserByToken($request);
+        $userRole = $this->authService->getUserByToken($request)->getRoles();
+
         $accountArray = $user->getAccounts()->toArray();
-        $outputDTOArray = [];
+        $response  = [];
 
         foreach ($accountArray as $account) {
-            $outputDTOArray[] = new OutputAccountDTO(
-                $account->getId(),
-                $account->getTitle(),
-                $account->getAccountType()->getId() ?? null,
-                $account->getAccountType()->getTitle() ?? null,
+            $account = $this->serializer->serialize(
+                $account,
+                'json',
+                ['groups' => $userRole]
             );
+
+            $response[] = json_decode($account, true);
         }
 
-        return  $outputDTOArray;
+        return new JsonResponse(json_encode($response), Response::HTTP_OK, [], true);
     }
 }

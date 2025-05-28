@@ -10,6 +10,7 @@ use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Table(name: '`user`')]
 #[ORM\Entity]
@@ -17,9 +18,12 @@ use Symfony\Component\Security\Core\User\UserInterface;
 #[ORM\HasLifecycleCallbacks]
 class User implements EntityInterface, UserInterface, PasswordAuthenticatedUserInterface
 {
+    private const ROLE_ADMIN = UserRoleEnum::ROLE_ADMIN->value;
+
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups([self::ROLE_ADMIN])]
     private ?int $id = null;
 
     #[ORM\Column(name: 'email', type: 'string', unique: true, nullable: false)]

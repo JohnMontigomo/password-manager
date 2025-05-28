@@ -4,10 +4,12 @@ namespace App\Domain\Entity;
 
 use ApiPlatform\Metadata\ApiResource;
 use App\Domain\Entity\Interface\EntityInterface;
+use App\Domain\Enum\UserRoleEnum;
 use DateTime;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Attribute\Groups;
 
 #[ORM\Table(name: '`account_type')]
 #[ORM\Entity]
@@ -15,12 +17,17 @@ use Doctrine\ORM\Mapping as ORM;
 #[ORM\HasLifecycleCallbacks]
 class AccountType implements EntityInterface
 {
+    private const ROLE_ADMIN = UserRoleEnum::ROLE_ADMIN->value;
+    private const ROLE_USER = UserRoleEnum::ROLE_USER->value;
+    
     #[ORM\Column(name: 'id', type: 'bigint', unique: true)]
     #[ORM\Id]
     #[ORM\GeneratedValue(strategy: 'IDENTITY')]
+    #[Groups([self::ROLE_ADMIN, self::ROLE_USER])]
     private ?int $id = null;
 
     #[ORM\Column(name: 'title', type: 'string', nullable: false)]
+    #[Groups([self::ROLE_ADMIN, self::ROLE_USER])]
     private string $title;
 
     #[ORM\OneToMany(targetEntity: Account::class, mappedBy: 'account_type')]
@@ -30,9 +37,11 @@ class AccountType implements EntityInterface
     private User $user;
 
     #[ORM\Column(name: 'created_at', type: 'datetime', nullable: false)]
+    #[Groups([self::ROLE_ADMIN])]
     private DateTime $createdAt;
 
     #[ORM\Column(name: 'updated_at', type: 'datetime', nullable: false)]
+    #[Groups([self::ROLE_ADMIN])]
     private DateTime $updatedAt;
 
     public function __construct()

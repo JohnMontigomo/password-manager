@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api\AccountType\Get\v1;
 
-use App\Controller\Exception\AccessDeniedException;
 use App\Controller\SiteRouteEnum\UrlEnum;
 use App\Domain\Entity\AccountType;
 use Symfony\Bridge\Doctrine\Attribute\MapEntity;
@@ -21,15 +20,9 @@ class Controller
     ) {
     }
 
-    /**
-     * @param AccountType|null $accountType
-     * @param Request $request
-     * @return OutputAccountTypeDTO|JsonResponse
-     * @throws AccessDeniedException
-     */
     #[Route(path: self::CONTROLLER_URL . '/{id}', methods: ['GET'])]
-    public function __invoke(#[MapEntity(id: 'id')] ?AccountType $accountType, Request $request
-    ): OutputAccountTypeDTO|JsonResponse {
+    public function __invoke(#[MapEntity(id: 'id')] ?AccountType $accountType, Request $request): JsonResponse
+    {
         return $this->handler->get($accountType, $request);
     }
 }

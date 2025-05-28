@@ -3,36 +3,37 @@
 namespace App\Controller\Api\AccountType\GetCollection\v1;
 
 use App\Application\Security\AuthService;
-use App\Controller\Api\AccountType\Get\v1\OutputAccountTypeDTO;
-use App\Domain\Service\AccountService;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class Handler
 {
     public function __construct(
         private readonly AuthService    $authService,
-        private readonly AccountService $accountService,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
-    /**
-     * @param Request $request
-     * @return OutputAccountTypeDTO[]
-     */
-    public function getCollection(Request $request): array
+    public function getCollection(Request $request): JsonResponse
     {
         $user = $this->authService->getUserByToken($request);
-        $accountTypeArray =  $user->getAccountTypes()->toArray();
-        $outputDTOArray = [];
+        $userRole = $this->authService->getUserByToken($request)->getRoles();
 
-        foreach ($accountTypeArray as $accountType) {
-            $outputDTOArray[] = new OutputAccountTypeDTO(
-                $accountType->getId(),
-                $accountType->getTitle(),
-                $this->accountService->getAccountIdByAccountTypeId($accountType->getId()),
+        $accountTypeArray =  $user->getAccountTypes()->toArray();
+        $response  = [];
+
+        foreach ($accountTypeArray  as $accountType) {
+            $accountType = $this->serializer->serialize(
+                $accountType,
+                'json',
+                ['groups' => $userRole]
             );
+
+            $response[] = json_decode($accountType, true);
         }
 
-        return  $outputDTOArray;
+        return new JsonResponse(json_encode($response), Response::HTTP_OK, [], true);
     }
 }

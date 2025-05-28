@@ -24,9 +24,6 @@ class Handler
     }
 
     /**
-     * @param InputAccountDTO $inputAccountDTO
-     * @param Request $request
-     * @return OutputAccountDTO
      * @throws AccountExistException
      */
     public function create(InputAccountDTO $inputAccountDTO, Request $request): OutputAccountDTO

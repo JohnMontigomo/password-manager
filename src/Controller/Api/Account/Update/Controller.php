@@ -23,13 +23,6 @@ class Controller
     {
     }
 
-    /**
-     * @param Account|null $account
-     * @param UpdateAccountDTO $updateAccountDTO
-     * @param Request $request
-     * @return Response
-     * @throws AccessDeniedException
-     */
     #[Route(path:self::CONTROLLER_URL . '/{id}', methods: ['PATCH'])]
     public function __invoke(
         #[MapEntity(id: 'id')] ?Account $account,

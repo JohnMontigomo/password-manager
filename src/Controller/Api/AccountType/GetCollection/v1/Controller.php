@@ -21,6 +21,6 @@ class Controller
     #[Route(path: self::CONTROLLER_URL, methods: ['GET'])]
     public function __invoke(Request $request): JsonResponse
     {
-        return new JsonResponse($this->handler->getCollection($request));
+        return $this->handler->getCollection($request);
     }
 }

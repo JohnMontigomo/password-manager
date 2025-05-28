@@ -23,10 +23,6 @@ class Handler
     }
 
     /**
-     * @param Account $account
-     * @param UpdateAccountDTO $updateAccountDTO
-     * @param Request $request
-     * @return string
      * @throws AccessDeniedException
      */
     public function update(Account $account, UpdateAccountDTO $updateAccountDTO, Request $request): string

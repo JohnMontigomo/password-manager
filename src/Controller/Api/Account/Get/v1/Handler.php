@@ -9,31 +9,33 @@ use App\Domain\Enum\MessageEnum;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class Handler
 {
     public function __construct(
         private readonly AuthService $authService,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
     /**
-     * @param Account|null $account
-     * @param Request $request
-     * @return OutputAccountDTO|JsonResponse
      * @throws AccessDeniedException
      */
-    public function get(?Account $account, Request $request): OutputAccountDTO|JsonResponse
+    public function get(?Account $account, Request $request): JsonResponse
     {
         if ($account instanceof Account) {
             $this->authService->checkAccessByToken($account, $request);
 
-            return new OutputAccountDTO(
-                $account->getId(),
-                $account->getTitle(),
-                $account->getAccountType()->getId() ?? null,
-                $account->getAccountType()->getTitle() ?? null,
+            $userRole = $this->authService->getUserByToken($request)->getRoles();
+
+            $json = $this->serializer->serialize(
+                $account,
+                'json',
+                ['groups' => $userRole]
             );
+
+            return new JsonResponse($json, Response::HTTP_OK, [], true);
         }
 
         return new JsonResponse([

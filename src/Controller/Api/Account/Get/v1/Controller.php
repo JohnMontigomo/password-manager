@@ -2,7 +2,6 @@
 
 namespace App\Controller\Api\Account\Get\v1;
 
-use App\Controller\Exception\AccessDeniedException;
 use App\Controller\SiteRouteEnum\UrlEnum;
 use App\Domain\Entity\Account;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,14 +20,8 @@ class Controller
     ) {
     }
 
-    /**
-     * @param Account|null $account
-     * @param Request $request
-     * @return OutputAccountDTO|JsonResponse
-     * @throws AccessDeniedException
-     */
     #[Route(path: self::CONTROLLER_URL . '/{id}', methods: ['GET'])]
-    public function __invoke(#[MapEntity(id: 'id')] ?Account $account, Request $request): OutputAccountDTO|JsonResponse
+    public function __invoke(#[MapEntity(id: 'id')] ?Account $account, Request $request): JsonResponse
     {
         return $this->handler->get($account, $request);
     }

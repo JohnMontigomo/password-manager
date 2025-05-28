@@ -20,9 +20,6 @@ class Handler
     }
 
     /**
-     * @param AccountType|null $accountType
-     * @param Request $request
-     * @return bool
      * @throws AccountTypeHasAccountException
      * @throws AccessDeniedException
      */

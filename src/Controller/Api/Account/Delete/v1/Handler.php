@@ -17,9 +17,6 @@ class Handler
     }
 
     /**
-     * @param Account|null $account
-     * @param Request $request
-     * @return bool
      * @throws AccessDeniedException
      */
     public function delete(?Account $account, Request $request): bool

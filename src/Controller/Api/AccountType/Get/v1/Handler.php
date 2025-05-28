@@ -6,36 +6,36 @@ use App\Application\Security\AuthService;
 use App\Controller\Exception\AccessDeniedException;
 use App\Domain\Entity\AccountType;
 use App\Domain\Enum\MessageEnum;
-use App\Domain\Service\AccountService;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\Serializer\SerializerInterface;
 
 class Handler
 {
     public function __construct(
-        private readonly AccountService $accountService,
-        private readonly AuthService    $authService,
+        private readonly AuthService $authService,
+        private readonly SerializerInterface $serializer,
     ) {
     }
 
     /**
-     * @param AccountType|null $accountType
-     * @param Request $request
-     * @return OutputAccountTypeDTO|JsonResponse
      * @throws AccessDeniedException
      */
-    public function get(?AccountType $accountType, Request $request): OutputAccountTypeDTO|JsonResponse
+    public function get(?AccountType $accountType, Request $request): JsonResponse
     {
         if ($accountType instanceof AccountType) {
             $this->authService->checkAccessByToken($accountType, $request);
 
-            return new OutputAccountTypeDTO(
-                $accountType->getId(),
-                $accountType->getTitle(),
-                $this->accountService->getAccountIdByAccountTypeId($accountType->getId()),
+            $userRole = $this->authService->getUserByToken($request)->getRoles();
+
+            $json = $this->serializer->serialize(
+                $accountType,
+                'json',
+                ['groups' => $userRole]
             );
 
+            return new JsonResponse($json, Response::HTTP_OK, [], true);
         }
 
         return new JsonResponse([

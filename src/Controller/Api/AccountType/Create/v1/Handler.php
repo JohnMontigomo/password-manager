@@ -20,9 +20,6 @@ class Handler
     }
 
     /**
-     * @param InputAccountTypeDTO $inputAccountTypeDTO
-     * @param Request $request
-     * @return OutputAccountTypeDTO
      * @throws AccountTypeExistException
      */
     public function create(InputAccountTypeDTO $inputAccountTypeDTO, Request $request): OutputAccountTypeDTO
@@ -43,9 +40,6 @@ class Handler
     }
 
     /**
-     * @param User $user
-     * @param string $title
-     * @return void
      * @throws AccountTypeExistException
      */
     private function checkAccountTypeUniqueForUser(User $user, string $title): void
