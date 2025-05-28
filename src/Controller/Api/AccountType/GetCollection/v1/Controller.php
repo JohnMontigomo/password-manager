@@ -11,7 +11,7 @@ use Symfony\Component\Routing\Attribute\Route;
 #[AsController]
 class Controller
 {
-    private const CONTROLLER_URL = UrlEnum::AccountTypeCollectionV1->value;
+    private const CONTROLLER_URL = UrlEnum::AccountTypeV1->value;
 
     public function __construct(
         private readonly Handler $handler,

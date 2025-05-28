@@ -84,7 +84,7 @@ class AbstractWebTestCase extends WebTestCase
 
     protected function updateUser(bool $errorEmail = false, bool $errorAuth = false): void
     {
-        $this->client->request('PATCH', UrlEnum::UserUpdateV1->value,  [],  [], [
+        $this->client->request('PATCH', UrlEnum::UserV1->value,  [],  [], [
             'CONTENT_TYPE' => 'application/json',
             'PHP_AUTH_USER' => !$errorAuth ? $this->getInputUserDTO()->email : 'error',
             'PHP_AUTH_PW'   => !$errorAuth ? $this->getInputUserDTO()->password : 'error',
@@ -139,7 +139,7 @@ class AbstractWebTestCase extends WebTestCase
 
     protected function getCollectionAccountType(): void
     {
-        $this->client->request('GET', UrlEnum::AccountTypeCollectionV1->value,  [],  [], [
+        $this->client->request('GET', UrlEnum::AccountTypeV1->value,  [],  [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_AUTHORIZATION' => 'Bearer ' . $this->createApiToken()
         ]);
@@ -183,7 +183,7 @@ class AbstractWebTestCase extends WebTestCase
 
     protected function getCollectionAccount(): void
     {
-        $this->client->request('GET', UrlEnum::AccountCollectionV1->value,  [],  [], [
+        $this->client->request('GET', UrlEnum::AccountV1->value,  [],  [], [
             'CONTENT_TYPE' => 'application/json',
             'HTTP_AUTHORIZATION' => 'Bearer ' . $this->createApiToken()
         ]);
